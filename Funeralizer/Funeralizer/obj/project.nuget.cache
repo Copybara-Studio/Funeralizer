@@ -1,8 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "udeUalNvjiAxHEC7oFCopO5xa3ReEJsqi+kx8gG7XOEepDjcCb9Ga3hFaP6l+YpSXPMPBI+IOBleU9NyxvFPxw==",
+  "dgSpecHash": "D7udmrrV8MMPIm/hw8SJ6PDbz07h6Fd1YgEdT1Tqh90m/NH7XMw9STaKjY02ANrxhSvxu0hpVqvilftLhS2+tA==",
   "success": true,
   "projectFilePath": "C:\\Users\\Zbysiu\\source\\repos\\Funeralizer\\Funeralizer\\Funeralizer\\Funeralizer.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\Zbysiu\\.nuget\\packages\\microsoft.win32.systemevents\\8.0.0\\microsoft.win32.systemevents.8.0.0.nupkg.sha512",
+    "C:\\Users\\Zbysiu\\.nuget\\packages\\system.drawing.common\\8.0.0\\system.drawing.common.8.0.0.nupkg.sha512"
+  ],
   "logs": []
 }
