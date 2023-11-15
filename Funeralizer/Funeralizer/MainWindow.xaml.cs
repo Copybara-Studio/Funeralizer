@@ -38,14 +38,14 @@ namespace Funeralizer
         {
             Bitmap bmp = new Bitmap(filePath);
             int[] rgb = new int[bmp.Width * bmp.Height * 3];
-            for (int i = 0; i < bmp.Width; i++)
+            for (int i = 0; i < bmp.Height; i++)
             {
-                for (int j = 0; j < bmp.Height; j++)
+                for (int j = 0; j < bmp.Width; j++)
                 {
-                    Color pixelColor = bmp.GetPixel(i, j);
-                    rgb[i * bmp.Height + j] = pixelColor.R;
-                    rgb[i * bmp.Height + j + 1] = pixelColor.G;
-                    rgb[i * bmp.Height + j + 2] = pixelColor.B;
+                    Color pixelColor = bmp.GetPixel(j, i);
+                    rgb[(i * bmp.Width + j) * 3] = pixelColor.R;
+                    rgb[(i * bmp.Width + j) * 3 + 1] = pixelColor.G;
+                    rgb[(i * bmp.Width + j) * 3 + 2] = pixelColor.B;
                 }
             }
             return rgb;
