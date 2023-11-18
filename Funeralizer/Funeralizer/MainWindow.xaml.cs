@@ -2,7 +2,8 @@
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Drawing;
-
+using System.Diagnostics;
+using System.IO;
 
 namespace Funeralizer
 {
@@ -11,7 +12,15 @@ namespace Funeralizer
     /// </summary>
     public partial class MainWindow : Window
     {
+        //[DllImport("FuneralizerASM.dll", CallingConvention = CallingConvention.Cdecl)]
+        //public static extern int[] funkcja_w_asm(int[] rgb);
+
+        //[DllImport("FuneralizerCPP.dll", CallingConvention = CallingConvention.Cdecl)]
+        //public static extern int[] funkcja_w_cpp(int[] rgb);
+
+        //path to the image file
         private string filePath;
+        //bitmap to store the original image and get access to its height and width
         Bitmap bmp;
         public MainWindow()
         {
@@ -23,9 +32,9 @@ namespace Funeralizer
         {
             OpenFileDialog op = new OpenFileDialog();
             op.Title = "Select a picture";
-            op.Filter = "All supported graphics|*.jpg;*.jpeg;*.png|" +
-              "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg|" +
-              "Portable Network Graphic (*.png)|*.png";
+            op.Filter = "All supported graphics|*.png;*.jpg;*.jpeg|" +
+                        "Portable Network Graphic (*.png)|*.png" +
+                        "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg|";
             if (op.ShowDialog() == true)
             {
                 filePath = op.FileName;
@@ -41,15 +50,64 @@ namespace Funeralizer
                 return;
             }
             int[] rgb = BitmapIntArray(filePath);
-            Bitmap bmp1 = IntArrayBitmap(rgb, bmp.Width, bmp.Height);
-            SaveFileDialog save = new SaveFileDialog();
-            save.Filter = "PNG Image|*.png";
-            save.Title = "Save an Image File";
+            //int[] asmRgb = funkcja_w_asm(rgb);
+            //int[] cppRgb = funkcja_w_cpp(rgb);
+            var asmWatch = Stopwatch.StartNew();
+            for (int i = 0; i < 10; i++)
+            {
+                //asmRgb = funkcja_w_asm(rgb);
+            }
+            asmWatch.Stop();
+
+            var cppWatch = Stopwatch.StartNew();
+            for (int i = 0; i < 10; i++)
+            {
+                //cppRgb = funkcja_w_cpp(rgb);
+            }
+            cppWatch.Stop();
+
+            Bitmap asmBitmap = IntArrayBitmap(rgb, bmp.Width, bmp.Height); //asmRgb in place of rgb
+            Bitmap cppBitmap = IntArrayBitmap(rgb, bmp.Width, bmp.Height); //cppRgb in place of rgb
+
+            double asmAvgTime = asmWatch.ElapsedMilliseconds / 10;
+            double cppAvgTime = cppWatch.ElapsedMilliseconds / 10;
+            MessageBox.Show("Average time of 10 executions:\n" +
+                            "ASM: " + asmAvgTime + "ms\n" +
+                            "CPP: " + cppAvgTime + "ms");
+            OpenFolderDialog save = new OpenFolderDialog();
+            save.Title = "Save the Image Files";
             if (save.ShowDialog() == true)
             {
-                bmp1.Save(save.FileName);
+                asmBitmap.Save(save.FolderName + "\\" + Path.GetFileNameWithoutExtension(filePath) + "_asm.png");
+                cppBitmap.Save(save.FolderName + "\\" + Path.GetFileNameWithoutExtension(filePath) + "_cpp.png");
+                imgPhotoGreyscaleAsm.Source = new BitmapImage(new Uri(save.FolderName + "\\" + Path.GetFileNameWithoutExtension(filePath) + "_asm.png"));
+                imgPhotoGreyscaleCpp.Source = new BitmapImage(new Uri(save.FolderName + "\\" + Path.GetFileNameWithoutExtension(filePath) + "_cpp.png"));
             }
-            imgPhotoGreyscale.Source = new BitmapImage(new Uri(save.FileName));
+
+
+            //SaveFileDialog asm = new SaveFileDialog();
+            //asm.Title = "Save an Image File from ASM";
+            //asm.Filter = "Portable Network Graphic (*.png)|*.png" +
+            //             "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg|";
+            //asm.AddExtension = true;
+            //asm.DefaultExt = "png";
+            //if (asm.ShowDialog() == true)
+            //{
+            //    asmBitmap.Save(asm.FileName);
+            //    imgPhotoGreyscaleAsm.Source = new BitmapImage(new Uri(asm.FileName));
+            //}
+
+            //SaveFileDialog cpp = new SaveFileDialog();
+            //cpp.Title = "Save an Image File from CPP";
+            //cpp.Filter = "Portable Network Graphic (*.png)|*.png" +
+            //             "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg|";
+            //cpp.AddExtension = true;
+            //cpp.DefaultExt = "png";
+            //if (cpp.ShowDialog() == true)
+            //{
+            //    asmBitmap.Save(cpp.FileName);
+            //    imgPhotoGreyscaleCpp.Source = new BitmapImage(new Uri(cpp.FileName));
+            //}
         }
 
         public int[] BitmapIntArray(string filePath)
@@ -85,4 +143,3 @@ namespace Funeralizer
     }
 
 }
-
