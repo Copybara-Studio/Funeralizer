@@ -128,19 +128,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Zbysiu\\.nuget\\packages\\": {}
+    "C:\\Users\\maciek\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Zbysiu\\source\\repos\\Funeralizer\\Funeralizer\\Funeralizer\\Funeralizer.csproj",
+      "projectUniqueName": "C:\\Users\\maciek\\Git\\Funeralizer\\Funeralizer\\Funeralizer\\Funeralizer.csproj",
       "projectName": "Funeralizer",
-      "projectPath": "C:\\Users\\Zbysiu\\source\\repos\\Funeralizer\\Funeralizer\\Funeralizer\\Funeralizer.csproj",
-      "packagesPath": "C:\\Users\\Zbysiu\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Zbysiu\\source\\repos\\Funeralizer\\Funeralizer\\Funeralizer\\obj\\",
+      "projectPath": "C:\\Users\\maciek\\Git\\Funeralizer\\Funeralizer\\Funeralizer\\Funeralizer.csproj",
+      "packagesPath": "C:\\Users\\maciek\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\maciek\\Git\\Funeralizer\\Funeralizer\\Funeralizer\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Zbysiu\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\maciek\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
