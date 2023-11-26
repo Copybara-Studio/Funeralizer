@@ -12,7 +12,7 @@ uint8_t pixel_average(uint8_t r, uint8_t g, uint8_t b)
                                 b * WEIGHT_BLUE);
 }
 
-void funeralize_cpp(int *rgb_values, int image_size)
+void funeralizeCpp(int *rgb_values, int image_size)
 {
     for (int i = 0; i < image_size; i += 3)
     {

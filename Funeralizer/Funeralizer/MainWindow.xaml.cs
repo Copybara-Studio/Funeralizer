@@ -13,12 +13,37 @@ namespace Funeralizer
     /// </summary>
     public partial class MainWindow : Window
     {
-
-        //[DllImport("FuneralizerASM.dll", CallingConvention = CallingConvention.Cdecl)]
-        //public static extern int[] funkcja_w_asm(int[] rgb);
+        /*
+        [DllImport("FuneralizerASM.dll", CallingConvention = CallingConvention.Cdecl)]
+        unsafe public static extern void funeralizeAsm(int* rgb, int rgbSize);
+        */
 
         [DllImport("FuneralizerCPP.dll", CallingConvention = CallingConvention.Cdecl)]
-        unsafe public static extern void funeralize_cpp(int* rgb, int rgb_size);
+        unsafe public static extern void funeralizeCpp(int* rgb, int rgbSize);
+
+        //helper to make code nicer :)
+        unsafe public delegate void funeralizerDelegate(int* rgb, int rgb_size);
+        unsafe public double RunFuneralizer(funeralizerDelegate funeralizingFunction, int[] rgb)
+        {
+            var rgbLength = rgb.Length;
+            int[][] rgbArray = new int[10][];
+            for (int i = 0; i < 10; ++i)
+            {
+                rgbArray[i] = (int[])rgb.Clone();
+
+            }
+
+            var execTime = Stopwatch.StartNew();
+            for (int i = 0; i < 10; ++i)
+            {
+                fixed (int* rgbPtr = &rgbArray[i][0])
+                {
+                    funeralizingFunction(rgbPtr, rgbLength);
+                }
+            }
+            execTime.Stop();
+            return execTime.ElapsedMilliseconds;
+        }
 
         //path to the image file
         private string filePath;
@@ -58,51 +83,30 @@ namespace Funeralizer
             unsafe
             {
                 int[] rgb = BitmapIntArray(filePath);
-                int rgb_size = bmp.Height * bmp.Width * 3;
+                int rgbSize = bmp.Height * bmp.Width * 3;
 
                 //raczej tymczasowe 
-                int[][] rgbCppArray = new int[11][];
-                //int*[] rgbAsmArray = new int[11][];
-                for (int i = 0; i < 11; ++i)
+                int[] rgbCpp = (int[])rgb.Clone();
+                int[] rgbAsm = (int[])rgb.Clone();
+
+                fixed (int* p = rgbCpp)
                 {
-                    rgbCppArray[i] = (int[])rgb.Clone();
-                    //rgbAsmArray[i] = (int[])rgb.Clone();
-                }
-                fixed (int* rgbResultCpp = &rgbCppArray[10][0])
-                {
-                    funeralize_cpp(rgbResultCpp, rgb_size);
+                    funeralizeCpp(p, rgbSize);
                 }
                 /*
-                fixed(int* rgbResultAsm = &rgbAsmArray[10][0])
+                fixed (int* p = rgbAsm)
                 {
-                    funeralize_asm(rgbResultAsm, rgb_size);
+                    funeralizeAsm(p, rgbSize);
                 }
                 */
-                var asmWatch = Stopwatch.StartNew();
-                for (int i = 0; i < 10; i++)
-                {
-                    /*
-                    fixed (int* rgbPtr = &rgbAsmArray[i][0])
-                    {
-                        funeralize_asm(rgbPtr, rgb_size);
-                    }
-                    */
-                }
-                asmWatch.Stop();
-                asmBitmap = IntArrayBitmap(rgb/*AsmArray[10]*/, bmp.Width, bmp.Height); //asmRgb in place of rgb
-                asmAvgTime = asmWatch.ElapsedMilliseconds / 10;
+                /*double asmTotalTime = RunFuneralizer(funeralizeAsm, rgb);*/
+                double cppTotalTime = RunFuneralizer(funeralizeCpp, rgb);
 
-                var cppWatch = Stopwatch.StartNew();
-                for (int i = 0; i < 10; i++)
-                {
-                    fixed (int* rgbPtr = &rgbCppArray[i][0])
-                    {
-                        funeralize_cpp(rgbPtr, rgb_size);
-                    }
-                }
-                cppWatch.Stop();
-                cppBitmap = IntArrayBitmap(rgbCppArray[10], bmp.Width, bmp.Height); //cppRgb in place of rgb
-                cppAvgTime = cppWatch.ElapsedMilliseconds / 10;
+                asmBitmap = IntArrayBitmap(rgb/*Asm*/, bmp.Width, bmp.Height); //asmRgb in place of rgb
+                asmAvgTime = 0/*asmTotalTime / 10*/;
+
+                cppBitmap = IntArrayBitmap(rgbCpp, bmp.Width, bmp.Height); //cppRgb in place of rgb
+                cppAvgTime = cppTotalTime / 10;
 
             }
 
