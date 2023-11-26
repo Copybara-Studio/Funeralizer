@@ -4,6 +4,7 @@ using System.Windows.Media.Imaging;
 using System.Drawing;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace Funeralizer
 {
@@ -12,11 +13,12 @@ namespace Funeralizer
     /// </summary>
     public partial class MainWindow : Window
     {
+
         //[DllImport("FuneralizerASM.dll", CallingConvention = CallingConvention.Cdecl)]
         //public static extern int[] funkcja_w_asm(int[] rgb);
 
-        //[DllImport("FuneralizerCPP.dll", CallingConvention = CallingConvention.Cdecl)]
-        //public static extern int[] funkcja_w_cpp(int[] rgb);
+        [DllImport("FuneralizerCPP.dll", CallingConvention = CallingConvention.Cdecl)]
+        unsafe public static extern void funeralize_cpp(int* rgb, int rgb_size);
 
         //path to the image file
         private string filePath;
@@ -49,28 +51,62 @@ namespace Funeralizer
                 MessageBox.Show("Please select a picture first.");
                 return;
             }
-            int[] rgb = BitmapIntArray(filePath);
-            //int[] asmRgb = funkcja_w_asm(rgb);
-            //int[] cppRgb = funkcja_w_cpp(rgb);
-            var asmWatch = Stopwatch.StartNew();
-            for (int i = 0; i < 10; i++)
+            Bitmap asmBitmap;
+            Bitmap cppBitmap;
+            double asmAvgTime;
+            double cppAvgTime;
+            unsafe
             {
-                //asmRgb = funkcja_w_asm(rgb);
+                int[] rgb = BitmapIntArray(filePath);
+                int rgb_size = bmp.Height * bmp.Width * 3;
+
+                //raczej tymczasowe 
+                int[][] rgbCppArray = new int[11][];
+                //int*[] rgbAsmArray = new int[11][];
+                for (int i = 0; i < 11; ++i)
+                {
+                    rgbCppArray[i] = (int[])rgb.Clone();
+                    //rgbAsmArray[i] = (int[])rgb.Clone();
+                }
+                fixed (int* rgbResultCpp = &rgbCppArray[10][0])
+                {
+                    funeralize_cpp(rgbResultCpp, rgb_size);
+                }
+                /*
+                fixed(int* rgbResultAsm = &rgbAsmArray[10][0])
+                {
+                    funeralize_asm(rgbResultAsm, rgb_size);
+                }
+                */
+                var asmWatch = Stopwatch.StartNew();
+                for (int i = 0; i < 10; i++)
+                {
+                    /*
+                    fixed (int* rgbPtr = &rgbAsmArray[i][0])
+                    {
+                        funeralize_asm(rgbPtr, rgb_size);
+                    }
+                    */
+                }
+                asmWatch.Stop();
+                asmBitmap = IntArrayBitmap(rgb/*AsmArray[10]*/, bmp.Width, bmp.Height); //asmRgb in place of rgb
+                asmAvgTime = asmWatch.ElapsedMilliseconds / 10;
+
+                var cppWatch = Stopwatch.StartNew();
+                for (int i = 0; i < 10; i++)
+                {
+                    fixed (int* rgbPtr = &rgbCppArray[i][0])
+                    {
+                        funeralize_cpp(rgbPtr, rgb_size);
+                    }
+                }
+                cppWatch.Stop();
+                cppBitmap = IntArrayBitmap(rgbCppArray[10], bmp.Width, bmp.Height); //cppRgb in place of rgb
+                cppAvgTime = cppWatch.ElapsedMilliseconds / 10;
+
             }
-            asmWatch.Stop();
 
-            var cppWatch = Stopwatch.StartNew();
-            for (int i = 0; i < 10; i++)
-            {
-                //cppRgb = funkcja_w_cpp(rgb);
-            }
-            cppWatch.Stop();
 
-            Bitmap asmBitmap = IntArrayBitmap(rgb, bmp.Width, bmp.Height); //asmRgb in place of rgb
-            Bitmap cppBitmap = IntArrayBitmap(rgb, bmp.Width, bmp.Height); //cppRgb in place of rgb
-
-            double asmAvgTime = asmWatch.ElapsedMilliseconds / 10;
-            double cppAvgTime = cppWatch.ElapsedMilliseconds / 10;
             MessageBox.Show("Average time of 10 executions:\n" +
                             "ASM: " + asmAvgTime + "ms\n" +
                             "CPP: " + cppAvgTime + "ms");
