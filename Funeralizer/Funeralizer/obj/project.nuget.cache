@@ -1,11 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "Fop+0isOtqs3hcETcqDWUXdD0vVJ+W8UtaIY90brIOxUo2wAYPztI+mCYP7j6Y2ZfbYrXLdpggGroMgd8s+8Lg==",
+  "dgSpecHash": "oDZlz2E1796eWcdyDiupkiVmTEXty7w/QfXZEdOkEqn0rG5MQghqL/OapsoCaRoBkbqQhatzYRj/kUblf/p72Q==",
   "success": true,
-  "projectFilePath": "C:\\Users\\mniec\\OneDrive\\Pulpit\\Funeralizer\\Funeralizer\\Funeralizer\\Funeralizer.csproj",
+  "projectFilePath": "C:\\Users\\maciek\\Git\\Funeralizer\\Funeralizer\\Funeralizer\\Funeralizer.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\mniec\\.nuget\\packages\\microsoft.win32.systemevents\\8.0.0\\microsoft.win32.systemevents.8.0.0.nupkg.sha512",
-    "C:\\Users\\mniec\\.nuget\\packages\\system.drawing.common\\8.0.0\\system.drawing.common.8.0.0.nupkg.sha512"
+    "C:\\Users\\maciek\\.nuget\\packages\\microsoft.win32.systemevents\\8.0.0\\microsoft.win32.systemevents.8.0.0.nupkg.sha512",
+    "C:\\Users\\maciek\\.nuget\\packages\\system.drawing.common\\8.0.0\\system.drawing.common.8.0.0.nupkg.sha512"
   ],
   "logs": []
 }
