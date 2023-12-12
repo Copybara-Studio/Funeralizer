@@ -1,0 +1,2 @@
+LIBRARY FuneralizerASM
+EXPORTS funeralize_asm

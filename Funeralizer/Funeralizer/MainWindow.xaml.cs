@@ -13,10 +13,9 @@ namespace Funeralizer
     /// </summary>
     public partial class MainWindow : Window
     {
-        /*
         [DllImport("FuneralizerASM.dll", CallingConvention = CallingConvention.Cdecl)]
         unsafe public static extern void funeralizeAsm(int* rgb, int rgbSize);
-        */
+       
 
         [DllImport("FuneralizerCPP.dll", CallingConvention = CallingConvention.Cdecl)]
         unsafe public static extern void funeralize_cpp(int* rgb, int rgbSize);
@@ -93,17 +92,16 @@ namespace Funeralizer
                 {
                     funeralize_cpp(p, rgbSize);
                 }
-                /*
+
                 fixed (int* p = rgbAsm)
                 {
                     funeralizeAsm(p, rgbSize);
                 }
-                */
-                /*double asmTotalTime = RunFuneralizer(funeralizeAsm, rgb);*/
+                double asmTotalTime = RunFuneralizer(funeralizeAsm, rgb);
                 double cppTotalTime = RunFuneralizer(funeralize_cpp, rgb);
 
-                asmBitmap = IntArrayBitmap(rgb/*Asm*/, bmp.Width, bmp.Height); //asmRgb in place of rgb
-                asmAvgTime = 0/*asmTotalTime / 10*/;
+                asmBitmap = IntArrayBitmap(rgbAsm, bmp.Width, bmp.Height); //asmRgb in place of rgb
+                asmAvgTime = asmTotalTime / 10;
 
                 cppBitmap = IntArrayBitmap(rgbCpp, bmp.Width, bmp.Height); //cppRgb in place of rgb
                 cppAvgTime = cppTotalTime / 10;
