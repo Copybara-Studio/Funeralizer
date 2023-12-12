@@ -1,66 +1,59 @@
-;-------------------------------------------------------------------------
-.386
-.MODEL FLAT, STDCALL
-
-OPTION CASEMAP:NONE
-;INCLUDE \masm32\include\windows.inc
+;INCLUDE C:\masm32\include\windows.inc
 .CODE
 
-DllEntry PROC hInstDLL:DWORD, reason:DWORD, reserved1:DWORD
-
-mov	eax, 1 	;TRUE
-ret
-
-DllEntry ENDP
-
-funeralize_asm PROC contents: DWORD, length: DWORD
+funeralize_asm PROC contents: DWORD, len: DWORD
 
 	; Clear the index register.
 	xor esi, esi
 
 	; Beginning of loop instruction block.
-repeat:
+@loop:
 	
 	; Deal the R component.
 	mov eax, contents[esi]
-	mul 299
-	div 1000
+	mov ecx, 299
+	mul ecx
+	mov edx, 1000
+	div edx
 	mov contents[esi], eax
 
 	; Prepare for the G component.
 	; Check whether it is valid!
 	inc esi
-	cmp esi, length
-	jge error
+	cmp esi, len
+	jnc @error
 	
 	; Deal the G component.
 	mov eax, contents[esi]
-	mul 587
-	div 1000
+	mov ecx, 587
+	mul ecx
+	mov edx, 1000
+	div edx
 	mov contents[esi], eax
 	
 	; Prepare for the B component.
 	; Check whether it is valid!
 	inc esi
-	cmp esi, length
-	jge error
+	cmp esi, len
+	jnc @error
 	
 	; Deal the B component.
 	mov eax, contents[esi]
-	mul 114
-	div 1000
+	mov ecx, 114
+	mul ecx
+	mov edx, 1000
+	div edx
 	mov contents[esi], eax
 
 	inc esi
-	cmp ecx, length
-	jl repeat
+	cmp esi, len
+	jc @loop
 	
 	mov eax, 1; Success
-	
-error:
+	ret
+@error:
 	mov eax, 0; Failure
-
+	ret
 funeralize_asm ENDP
 
-END DllEntry
-;-------------------------------------------------------------------------
+END
