@@ -70,3 +70,4 @@ C:\Users\mniec\OneDrive\Pulpit\Funeralizer\Funeralizer\Funeralizer\obj\Debug\net
 C:\Users\mniec\OneDrive\Pulpit\Funeralizer\Funeralizer\Funeralizer\obj\Debug\net8.0-windows\Funeralizer.sourcelink.json
 C:\Users\mniec\OneDrive\Pulpit\Funeralizer\Funeralizer\Funeralizer\obj\Debug\net8.0-windows\Funeralizer.genruntimeconfig.cache
 C:\Users\mniec\OneDrive\Pulpit\Funeralizer\Funeralizer\Funeralizer\obj\Debug\net8.0-windows\ref\Funeralizer.dll
+C:\Users\Zbysiu\source\repos\Funeralizer\Funeralizer\Funeralizer\bin\Debug\net8.0-windows\Funeralizer.dll.config
