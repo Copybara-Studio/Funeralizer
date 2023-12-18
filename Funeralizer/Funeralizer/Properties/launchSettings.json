@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Funeralizer": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}
