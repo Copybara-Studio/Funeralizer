@@ -121,31 +121,6 @@ namespace Funeralizer
                 imgPhotoGreyscaleAsm.Source = new BitmapImage(new Uri(save.FolderName + "\\" + Path.GetFileNameWithoutExtension(filePath) + "_asm.png"));
                 imgPhotoGreyscaleCpp.Source = new BitmapImage(new Uri(save.FolderName + "\\" + Path.GetFileNameWithoutExtension(filePath) + "_cpp.png"));
             }
-
-
-            //SaveFileDialog asm = new SaveFileDialog();
-            //asm.Title = "Save an Image File from ASM";
-            //asm.Filter = "Portable Network Graphic (*.png)|*.png" +
-            //             "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg|";
-            //asm.AddExtension = true;
-            //asm.DefaultExt = "png";
-            //if (asm.ShowDialog() == true)
-            //{
-            //    asmBitmap.Save(asm.FileName);
-            //    imgPhotoGreyscaleAsm.Source = new BitmapImage(new Uri(asm.FileName));
-            //}
-
-            //SaveFileDialog cpp = new SaveFileDialog();
-            //cpp.Title = "Save an Image File from CPP";
-            //cpp.Filter = "Portable Network Graphic (*.png)|*.png" +
-            //             "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg|";
-            //cpp.AddExtension = true;
-            //cpp.DefaultExt = "png";
-            //if (cpp.ShowDialog() == true)
-            //{
-            //    asmBitmap.Save(cpp.FileName);
-            //    imgPhotoGreyscaleCpp.Source = new BitmapImage(new Uri(cpp.FileName));
-            //}
         }
 
         public int[] BitmapIntArray(string filePath)
