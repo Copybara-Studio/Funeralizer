@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Funeralizer")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d6842ddf067b2257f507bc7881a37f33d929af07")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4c147475568d2fd729fc2617ae908cf5b4576738")]
 [assembly: System.Reflection.AssemblyProductAttribute("Funeralizer")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Funeralizer")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
