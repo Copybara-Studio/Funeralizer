@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Windows.Media;
 
 namespace Funeralizer
 {
@@ -114,8 +115,7 @@ namespace Funeralizer
                         for (int i = 0; i < 10; ++i)
                             File.AppendAllText(save.FolderName + "\\" + Path.GetFileNameWithoutExtension(filePath) + "_asm.txt", times[i] + " ms\n");
                         asmBitmap.Save(save.FolderName + "\\" + Path.GetFileNameWithoutExtension(filePath) + "_asm.png");
-                        asmBitmap.Dispose();
-                        imgPhotoGreyscaleAsm.Source = new BitmapImage(new Uri(save.FolderName + "\\" + Path.GetFileNameWithoutExtension(filePath) + "_asm.png"));
+                        imgPhotoGreyscaleAsm.Source = Convert(asmBitmap);
                     }
                 }
             }
@@ -144,8 +144,7 @@ namespace Funeralizer
                         for (int i = 0; i < 10; ++i)
                             File.AppendAllText(save.FolderName + "\\" + Path.GetFileNameWithoutExtension(filePath) + "_cpp.txt", times[i] + " ms\n");
                         cppBitmap.Save(save.FolderName + "\\" + Path.GetFileNameWithoutExtension(filePath) + "_cpp.png");
-                        cppBitmap.Dispose();
-                        imgPhotoGreyscaleCpp.Source = new BitmapImage(new Uri(save.FolderName + "\\" + Path.GetFileNameWithoutExtension(filePath) + "_cpp.png"));
+                        imgPhotoGreyscaleCpp.Source = Convert(cppBitmap);
                     }
                 }
             }
@@ -161,7 +160,7 @@ namespace Funeralizer
             {
                 for (int j = 0; j < bmp.Width; j++)
                 {
-                    Color pixelColor = bmp.GetPixel(j, i);
+                    System.Drawing.Color pixelColor = bmp.GetPixel(j, i);
                     rgb[(i * bmp.Width + j) * 3] = pixelColor.R;
                     rgb[(i * bmp.Width + j) * 3 + 1] = pixelColor.G;
                     rgb[(i * bmp.Width + j) * 3 + 2] = pixelColor.B;
@@ -178,11 +177,23 @@ namespace Funeralizer
             {
                 for (int j = 0; j < width; j++)
                 {
-                    bmp.SetPixel(j, i, Color.FromArgb(rgb[index], rgb[index + 1], rgb[index + 2]));
+                    bmp.SetPixel(j, i, System.Drawing.Color.FromArgb(rgb[index], rgb[index + 1], rgb[index + 2]));
                     index += 3;
                 }
             }
             return bmp;
+        }
+
+        public BitmapImage Convert(Bitmap src)
+        {
+            MemoryStream ms = new MemoryStream();
+            src.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+            BitmapImage image = new BitmapImage();
+            image.BeginInit();
+            ms.Seek(0, SeekOrigin.Begin);
+            image.StreamSource = ms;
+            image.EndInit();
+            return image;
         }
     }
 
