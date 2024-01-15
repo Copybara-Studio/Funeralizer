@@ -20,10 +20,14 @@ namespace Funeralizer
         [DllImport("FuneralizerCPP.dll", CallingConvention = CallingConvention.Cdecl)]
         unsafe public static extern void funeralize_cpp(int* rgb, int rgbSize);
 
+        //String array with times of execution
+        string[] times = new string[10];
+
         //helper to make code nicer :)
         unsafe public delegate void funeralizerDelegate(int* rgb, int rgb_size);
         unsafe public double RunFuneralizer(funeralizerDelegate funeralizingFunction, int[] rgb)
         {
+            double totalTime = 0;
             var rgbLength = rgb.Length;
             int[][] rgbArray = new int[10][];
             for (int i = 0; i < 10; ++i)
@@ -35,13 +39,16 @@ namespace Funeralizer
             var execTime = Stopwatch.StartNew();
             for (int i = 0; i < 10; ++i)
             {
+                execTime.Restart();
                 fixed (int* rgbPtr = &rgbArray[i][0])
                 {
                     funeralizingFunction(rgbPtr, rgbLength);
                 }
+                execTime.Stop();
+                totalTime += execTime.Elapsed.TotalMilliseconds;
+                times[i] = execTime.Elapsed.TotalMilliseconds.ToString();
             }
-            execTime.Stop();
-            return execTime.ElapsedMilliseconds;
+            return totalTime;
         }
 
         //path to the image file
@@ -75,52 +82,76 @@ namespace Funeralizer
                 MessageBox.Show("Please select a picture first.");
                 return;
             }
-            Bitmap asmBitmap;
-            Bitmap cppBitmap;
-            double asmAvgTime;
-            double cppAvgTime;
-            unsafe
+            if (!cbxAsm.IsChecked.Value && !cbxCpp.IsChecked.Value)
             {
-                int[] rgb = BitmapIntArray(filePath);
-                int rgbSize = bmp.Height * bmp.Width * 3;
-
-                //raczej tymczasowe 
-                int[] rgbCpp = (int[])rgb.Clone();
-                int[] rgbAsm = (int[])rgb.Clone();
-
-                fixed (int* p = rgbCpp)
+                MessageBox.Show("Please select at least one option.");
+                return;
+            }
+            string message = "Average time of 10 executions:\n";
+            double averageTime = 0;
+            if (cbxAsm.IsChecked.Value)
+            {
+                Bitmap asmBitmap;
+                unsafe
                 {
-                    funeralize_cpp(p, rgbSize);
-                }
+                    int[] rgb = BitmapIntArray(filePath);
+                    int rgbSize = bmp.Height * bmp.Width * 3;
 
-                fixed (int* p = rgbAsm)
+                    int[] rgbAsm = (int[])rgb.Clone();
+
+                    fixed (int* p = rgbAsm)
+                    {
+                        funeralize_asm(p, rgbSize);
+                    }
+                    double asmTotalTime = RunFuneralizer(funeralize_asm, rgb);
+                    averageTime = asmTotalTime / 10;
+                    asmBitmap = IntArrayBitmap(rgbAsm, bmp.Width, bmp.Height);
+                    message += "ASM: " + averageTime + " ms\n";                    
+                    OpenFolderDialog save = new OpenFolderDialog();
+                    save.Title = "Save the Image File (ASM)";
+                    if (save.ShowDialog() == true)
+                    {
+                        for (int i = 0; i < 10; ++i)
+                            File.AppendAllText(save.FolderName + "\\" + Path.GetFileNameWithoutExtension(filePath) + "_asm.txt", times[i] + " ms\n");
+                        asmBitmap.Save(save.FolderName + "\\" + Path.GetFileNameWithoutExtension(filePath) + "_asm.png");
+                        asmBitmap.Dispose();
+                        imgPhotoGreyscaleAsm.Source = new BitmapImage(new Uri(save.FolderName + "\\" + Path.GetFileNameWithoutExtension(filePath) + "_asm.png"));
+                    }
+                }
+            }
+            if (cbxCpp.IsChecked.Value)
+            {
+                Bitmap cppBitmap;
+                unsafe
                 {
-                    funeralize_asm(p, rgbSize);
+                    int[] rgb = BitmapIntArray(filePath);
+                    int rgbSize = bmp.Height * bmp.Width * 3;
+
+                    int[] rgbCpp = (int[])rgb.Clone();
+
+                    fixed (int* p = rgbCpp)
+                    {
+                        funeralize_cpp(p, rgbSize);
+                    }
+                    double cppTotalTime = RunFuneralizer(funeralize_cpp, rgb);
+                    averageTime = cppTotalTime / 10;
+                    cppBitmap = IntArrayBitmap(rgbCpp, bmp.Width, bmp.Height);
+                    message += "CPP: " + averageTime + " ms\n";
+                    OpenFolderDialog save = new OpenFolderDialog();
+                    save.Title = "Save the Image File (C++)";
+                    if (save.ShowDialog() == true)
+                    {
+                        for (int i = 0; i < 10; ++i)
+                            File.AppendAllText(save.FolderName + "\\" + Path.GetFileNameWithoutExtension(filePath) + "_cpp.txt", times[i] + " ms\n");
+                        cppBitmap.Save(save.FolderName + "\\" + Path.GetFileNameWithoutExtension(filePath) + "_cpp.png");
+                        cppBitmap.Dispose();
+                        imgPhotoGreyscaleCpp.Source = new BitmapImage(new Uri(save.FolderName + "\\" + Path.GetFileNameWithoutExtension(filePath) + "_cpp.png"));
+                    }
                 }
-                double asmTotalTime = RunFuneralizer(funeralize_asm, rgb);
-                double cppTotalTime = RunFuneralizer(funeralize_cpp, rgb);
-
-                asmBitmap = IntArrayBitmap(rgbAsm, bmp.Width, bmp.Height); //asmRgb in place of rgb
-                asmAvgTime = asmTotalTime / 10;
-
-                cppBitmap = IntArrayBitmap(rgbCpp, bmp.Width, bmp.Height); //cppRgb in place of rgb
-                cppAvgTime = cppTotalTime / 10;
-
             }
 
-
-            MessageBox.Show("Average time of 10 executions:\n" +
-                            "ASM: " + asmAvgTime + "ms\n" +
-                            "CPP: " + cppAvgTime + "ms");
-            OpenFolderDialog save = new OpenFolderDialog();
-            save.Title = "Save the Image Files";
-            if (save.ShowDialog() == true)
-            {
-                asmBitmap.Save(save.FolderName + "\\" + Path.GetFileNameWithoutExtension(filePath) + "_asm.png");
-                cppBitmap.Save(save.FolderName + "\\" + Path.GetFileNameWithoutExtension(filePath) + "_cpp.png");
-                imgPhotoGreyscaleAsm.Source = new BitmapImage(new Uri(save.FolderName + "\\" + Path.GetFileNameWithoutExtension(filePath) + "_asm.png"));
-                imgPhotoGreyscaleCpp.Source = new BitmapImage(new Uri(save.FolderName + "\\" + Path.GetFileNameWithoutExtension(filePath) + "_cpp.png"));
-            }
+            MessageBox.Show(message);
+            
         }
 
         public int[] BitmapIntArray(string filePath)
